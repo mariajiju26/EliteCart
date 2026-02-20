@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - EliteCart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .product-card {
+            transition: 0.3s;
+            border-radius: 15px;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+        .search-header {
+            background: #f8f9fa;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold" href="home.html">EliteCart</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                </ul>
+                <form action="search.html" method="GET" class="form-inline ml-lg-3">
+                    <input class="form-control mr-sm-2" type="search" name="q" placeholder="Search products..." required>
+                    <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <header class="search-header text-center">
+        <div class="container">
+            <h2 class="font-weight-bold">Search Results</h2>
+            <p class="text-muted" id="search-query-text">Showing results for your search</p>
+        </div>
+    </header>
+
+    <div class="container mb-5">
+        <div class="row" id="search-results-container">
+            </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-4">
+        <p>&copy; 2026 EliteCart | All Rights Reserved</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Updated data with your actual URLs and keywords
+        const allProducts = [
+            { id: 'watch', name: "Smart Watch v2", price: "₹9,999", img: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=600", category: "electronics" },
+            { id: 'audio', name: "Wireless Bluetooth Headphones", price: "₹4,500", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600", category: "electronics" },
+            { id: 'elec5', name: "Bluetooth Smart Speaker", price: "₹2,999", img: "https://www.portronics.com/cdn/shop/files/Portronics_Resound_2_best_portable_speakers_in_India_under_3000.jpg?v=1736943324", category: "electronics" },
+            { id: 'decor1', name: "Modern Lounge Chair", price: "₹15,500", img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600", category: "home decor" },
+            { id: 'decor2', name: "Ceramic Minimalist Vase", price: "₹1,500", img: "https://www.coteacoast.com/cdn/shop/files/FullSizeRender4721_1024x1024.jpg?v=1685121289", category: "home decor" },
+            { id: 'decor3', name: "Ceramic Table Lamp", price: "₹2,100", img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400", category: "home decor" },
+            { id: 'cam', name: "Digital Camera 4K", price: "₹42,000", img: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600", category: "electronics" },
+            { id: 'fashion2', name: "Urban Sneakers", price: "₹4,999", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600", category: "fashion" }
+        ];
+
+        function performSearch() {
+            const params = new URLSearchParams(window.location.search);
+            const query = params.get('q') ? params.get('q').toLowerCase() : '';
+            const resultsContainer = document.getElementById('search-results-container');
+            
+            if(query) {
+                document.getElementById('search-query-text').innerText = `Showing results for "${query}"`;
+            }
+
+            // Filters by checking if the name or category includes the search term
+            const filtered = allProducts.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query)
+            );
+
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <p class="lead">No products found matching "${query}".</p>
+                        <a href="products.html" class="btn btn-warning">Browse All Products</a>
+                    </div>`;
+                return;
+            }
+
+            resultsContainer.innerHTML = filtered.map(product => `
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card product-card">
+                        <img src="${product.img}" class="card-img-top" alt="${product.name}">
+                        <div class="card-body">
+                            <h5 class="card-title font-weight-bold">${product.name}</h5>
+                            <p class="card-text text-success font-weight-bold">${product.price}</p>
+                            <a href="product-view.html?id=${product.id}" class="btn btn-outline-dark btn-block">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.onload = performSearch;
+    </script>
+</body>
+</html>
